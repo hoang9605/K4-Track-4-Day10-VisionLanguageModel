@@ -20,6 +20,6 @@ subprocess.run([sys.executable, "lab.py", "run", "--config", "configs/e1.yaml",
 
 Sau khi có kết quả thật: điền REPORT.md, lấy bảng trong report/RESULTS.md, đọc sáu ảnh và output E0, rồi chạy scripts/check_submission.py. E5 không bắt buộc: có reward IoU và test; chưa triển khai GRPO.
 
-Đã chạy E0 và huấn luyện đủ 300 bước E1 trên Tesla T4; pipeline E1–E4 đang tiếp tục. Xem `REPORT.md` và `report/evidence/` để phân biệt kết quả đã đo với phần còn chờ. Các lần smoke test một bước chỉ để kiểm tra môi trường, không phải bằng chứng nộp bài.
+Đã chạy E0 và huấn luyện đủ 300 bước E1 trên Tesla T4; E2–E4 chưa có bằng chứng hoàn chỉnh sau khi mất kết nối runtime T4. Xem `REPORT.md` và `report/evidence/` để phân biệt kết quả đã đo với phần còn chờ. Các lần smoke test một bước chỉ để kiểm tra môi trường, không phải bằng chứng nộp bài.
 
 Bộ test gốc có một kiểm tra yêu cầu REPORT.md còn chuỗi `<điền`, mâu thuẫn với check_submission.py yêu cầu xóa chuỗi đó. Sau khi điền báo cáo, chỉ bỏ riêng kiểm tra mẫu bằng `python -m pytest -q -k "not test_report_template_has_student_markers_and_ten_questions"`; không sửa scripts/ hoặc tests/.

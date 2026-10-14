@@ -1,7 +1,7 @@
 Họ tên: NguyenHaiHoang
 `dataset_version`: d10-21e4070301
 
-Trạng thái: đang chạy thực nghiệm E0–E4 trên Colab Tesla T4. E0 và E1 đã chấm test đầy đủ; E2 đang huấn luyện. Các ô chưa có kết quả vẫn để trống cho đến khi có bằng chứng thực.
+Trạng thái bài push: E0 và E1 đã chấm test đầy đủ trên Colab Tesla T4. Log E2 cuối cùng đã kiểm tra đến bước 110/300; sau khi VS Code đóng, chưa khôi phục được runtime T4. Chưa có evidence E2–E4, nên bài chưa đạt điều kiện nộp đầy đủ. Các ô thiếu kết quả để trống, không thay bằng số giả.
 
 ## Bảng tổng hợp (số của bạn, lấy từ `report/evidence/*.json`)
 
@@ -75,4 +75,4 @@ GT màu xanh, dự đoán màu đỏ. Ba ảnh đầu được chọn từ nhóm
 
 ## Nhìn lại
 
-Phần CPU đã kiểm tra nhãn, reward, ghép batch, tên module model và mask loss bằng processor thật. Smoke test GPU của E1/E2/E3 đều qua sau khi sửa quy tắc bỏ qua visual và gỡ TorchAO cũ; smoke không dùng làm evidence. E1 đủ 300 bước: loss từ 1,1483 xuống 0,5433, 33.030.144 tham số trainable, VRAM đỉnh 8,0295 GB, 45,1327 phút. Validation E1 có F1=0,1872, parse_valid_rate=0,9819; Test E1 đạt F1=0,2528, parse_valid_rate=0,9936, không thiếu dự đoán; F1 tăng 0,1897 so với E0, đạt ngưỡng ≥0,10 của rubric. E2–E4 đang chạy. Kernel Colab có filesystem riêng; notebook hoàn thiện chứa gói mã nguồn để giải nén vào runtime. Checkpoint hiện lưu adapter/projector và log, chưa lưu optimizer để resume chính xác; checkpoint E1 đủ 300 bước đã tải về máy và kiểm tra CRC ZIP. E5 là tùy chọn: mới có reward IoU và test, chưa có GRPO hay bằng chứng bonus. Báo cáo còn chờ kết quả test E2–E4 trước khi nộp.
+Phần CPU đã kiểm tra nhãn, reward, ghép batch, tên module model và mask loss bằng processor thật. Smoke test GPU của E1/E2/E3 đều qua sau khi sửa quy tắc bỏ qua visual và gỡ TorchAO cũ; smoke không dùng làm evidence. E1 đủ 300 bước: loss từ 1,1483 xuống 0,5433, 33.030.144 tham số trainable, VRAM đỉnh 8,0295 GB, 45,1327 phút. Validation E1 có F1=0,1872, parse_valid_rate=0,9819; Test E1 đạt F1=0,2528, parse_valid_rate=0,9936, không thiếu dự đoán; F1 tăng 0,1897 so với E0, đạt ngưỡng ≥0,10 của rubric. E2–E4 chưa có bằng chứng hoàn chỉnh; cần khôi phục GPU để tiếp tục. Kernel Colab có filesystem riêng; notebook hoàn thiện chứa gói mã nguồn để giải nén vào runtime. Checkpoint hiện lưu adapter/projector và log, chưa lưu optimizer để resume chính xác; checkpoint E1 đủ 300 bước đã tải về máy và kiểm tra CRC ZIP. E5 là tùy chọn: mới có reward IoU và test, chưa có GRPO hay bằng chứng bonus. Báo cáo còn chờ kết quả test E2–E4 trước khi nộp.
