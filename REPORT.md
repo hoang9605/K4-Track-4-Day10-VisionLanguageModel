@@ -34,16 +34,44 @@ QLoRA cập nhật adapter float, không tối ưu trực tiếp các trọng s�
 Các frame gần nhau cùng phiên quay có nội dung rất giống nhau. Chia ngẫu nhiên dễ đưa các frame gần trùng vào train và test; model có thể nhớ cảnh thay vì tổng quát hóa sang phiên mới, dẫn đến F1 quá lạc quan. Đã chạy prepare_data.py và lab.py audit trên dataset thật tại Colab, phiên bản d10-21e4070301. Train có 1.422 ảnh, 1.074 pothole, 1.750 crack, 691 manhole; validation có 276 ảnh, 66 pothole, 470 crack, 103 manhole; test có 311 ảnh, 121 pothole, 299 crack, 163 manhole. Kiểm tra các tập session không giao nhau đã đạt. Validation chỉ có 66 box pothole nên việc chọn setup dựa trên micro F1 cần đối chiếu thêm F1 từng lớp.
 
 ### Câu 7 — So sánh E1/E2/E3: mở projector và LoRA trên ViT có đáng không (F1, CI95, VRAM, thời gian)?
-Chưa có kết quả huấn luyện nên chưa kết luận setup nào đáng dùng. E2 thêm 109.105.152 tham số projector học đầy đủ; E3 thêm adapter ViT và cần gradient qua visual backbone, nên dự kiến tốn bộ nhớ và thời gian hơn E1. Cần đối chiếu lợi ích F1 với VRAM/thời gian đo thật trong evidence, và xem CI95 trước khi kết luận cải thiện đáng tin. E4 chọn setup nền theo validation, không chọn theo test.
+E1 đã có test F1=0,2528, CI95=[0,2187; 0,2913], VRAM=8,0295 GB và thời gian=45,1327 phút. Precision tăng từ 0,0815 lên 0,2552, recall từ 0,0515 lên 0,2504; tuy nhiên FP/ảnh tăng từ 1,0868 lên 1,3698 do model dự đoán nhiều hơn. E2/E3 chưa chấm xong nên chưa kết luận việc mở thêm khối có đáng dùng. E2 thêm 109.105.152 tham số projector học đầy đủ; E3 thêm adapter ViT và cần gradient qua visual backbone, nên dự kiến tốn bộ nhớ và thời gian hơn E1. Cần đối chiếu lợi ích F1 với VRAM/thời gian đo thật trong evidence, và xem CI95 trước khi kết luận cải thiện đáng tin. E4 chọn setup nền theo validation, không chọn theo test.
 
 ### Câu 8 — Tập test có 311 ảnh: khoảng tin cậy rộng thế nào, và điều đó giới hạn kết luận so sánh các setup ra sao?
-E0 có CI95=[0,0429; 0,0869], độ rộng 0,0440, tương đương khoảng 70% F1 điểm 0,0631; mức bất định tương đối lớn. Các setup còn lại sẽ đối chiếu khi chấm xong. score.py bootstrap theo ảnh; nhiều ảnh cùng phiên vẫn có thể tương quan nên CI theo ảnh không hoàn toàn phản ánh bất định khi đổi phiên quay. Hai CI chồng nhau không tự chứng minh hai setup bằng nhau; muốn kiểm định chênh lệch nên bootstrap ghép cặp trên cùng ảnh hoặc theo session. Không diễn giải một chênh lệch F1 nhỏ là cải thiện chắc chắn chỉ từ một lần chạy.
+E0 có CI95=[0,0429; 0,0869], độ rộng 0,0440, tương đương khoảng 70% F1 điểm 0,0631; mức bất định tương đối lớn. E1 có CI95=[0,2187; 0,2913], độ rộng 0,0726. E1 tăng F1 0,1897 và CI của E1 nằm trên CI E0; đây là bằng chứng cải thiện ở split này, nhưng chưa phải kiểm định ghép cặp. E2–E4 sẽ đối chiếu khi chấm xong. score.py bootstrap theo ảnh; nhiều ảnh cùng phiên vẫn có thể tương quan nên CI theo ảnh không hoàn toàn phản ánh bất định khi đổi phiên quay. Hai CI chồng nhau không tự chứng minh hai setup bằng nhau; muốn kiểm định chênh lệch nên bootstrap ghép cặp trên cùng ảnh hoặc theo session. Không diễn giải một chênh lệch F1 nhỏ là cải thiện chắc chắn chỉ từ một lần chạy.
 
 ### Câu 9 — Phân tích lỗi theo lớp: lớp nào kém nhất và vì sao (kích thước box, số mẫu, ngữ nghĩa)? Kèm ảnh minh hoạ.
 Ở E0, crack kém nhất: F1=0,0177 so với pothole=0,0719 và manhole=0,1626. Tính từ nhãn test, diện tích box trung vị là pothole 0,4193%, crack 1,9813%, manhole 0,6688% khung hình; train có lần lượt 1.074, 1.750, 691 box (report/box_statistics.json). Crack có nhiều nhãn và box trung vị lớn hơn hai lớp kia, nên không đủ bằng chứng quy lỗi chỉ cho ít mẫu hoặc box nhỏ. Ví dụ vlcsnap-00201: crack GT=[558,736,731,825], nhưng E0 trả [0,457,1000,999] và bỏ sót manhole GT=[856,725,919,789]. Đây là lỗi định vị và bỏ sót thực tế; giả thuyết model gộp vùng nứt/vệt mặt đường rộng cần đối chiếu ảnh. `finish_lab.py figures` sẽ tạo 3 ảnh F1 thấp và 3 ảnh F1 cao của setup chọn bằng validation, vẽ GT xanh và dự đoán đỏ, kèm image_id/F1.
 
 ### Câu 10 — E4: bạn đổi biến nào, kết quả thế nào, và kết luận có đáng tin không?
 Chọn biến rank: r=4 và r=64, alpha=2r theo đề. `finish_lab.py e4` chọn setup nền có F1 validation cao nhất trong E1–E3 rồi tạo hai config bằng deepcopy; giữ nguyên learning rate, batch, số bước, seed, targets và trạng thái projector. Chưa chạy nên chưa có kết quả hoặc kết luận thực nghiệm. So sánh cả hai evidence và CI95; một seed và một test nhỏ chưa đủ kết luận rank cao luôn tốt hơn.
+
+## Sáu ảnh dự đoán E1 đã kiểm tra
+
+GT màu xanh, dự đoán màu đỏ. Ba ảnh đầu được chọn từ nhóm F1 ảnh thấp nhất, ba ảnh cuối từ nhóm cao nhất, nên đây là ví dụ có chủ đích để phân tích lỗi, không phải mẫu ngẫu nhiên đại diện toàn test. F1 tổng thể lấy từ toàn bộ 311 ảnh.
+
+Ảnh vlcsnap-00201, F1=0: E1 gán crack cho vùng gần manhole và bỏ sót crack GT bên trái. IoU giữa crack dự đoán với crack GT bằng 0; cả hai GT đều không được match đúng lớp.
+
+![E1: box crack lệch vị trí và bỏ sót manhole](report/figures/e1_1.png)
+
+Ảnh vlcsnap-00203, F1=0: hai box crack nhỏ nằm phía trên vùng crack GT rộng; IoU tốt nhất chỉ khoảng 0,002. Lỗi là vị trí và phạm vi vùng hư hại, dù JSON và nhãn lớp đều hợp lệ.
+
+![E1: dự đoán các box nhỏ lệch vùng crack](report/figures/e1_2.png)
+
+Ảnh vlcsnap-00207, F1=0: model nhận đúng vùng crack nhưng box nằm trong GT và quá nhỏ, IoU≈0,394<0,5. Một dự đoán nhìn có vẻ hợp lý vẫn bị tính một FP và một FN theo ngưỡng chấm.
+
+![E1: box crack quá nhỏ, IoU dưới ngưỡng](report/figures/e1_3.png)
+
+Ảnh vlcsnap-2025-02-19-17h14m33s249, F1=1: box manhole đúng lớp, đủ IoU và không có dự đoán thừa.
+
+![E1: manhole được định vị đúng](report/figures/e1_4.png)
+
+Ảnh vlcsnap-2025-02-19-17h14m56s176, F1=1: box manhole khớp vùng mục tiêu; khác biệt nhỏ ở biên không làm mất match.
+
+![E1: biên box manhole đủ khớp GT](report/figures/e1_5.png)
+
+Ảnh vlcsnap-2025-02-19-17h16m03s525, F1=1: pothole gần giữa mặt đường được dự đoán đúng, không có box thừa.
+
+![E1: pothole được định vị đúng](report/figures/e1_6.png)
 
 ## Nhìn lại
 
