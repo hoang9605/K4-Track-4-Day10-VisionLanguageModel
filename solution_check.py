@@ -4,6 +4,15 @@ import unittest
 
 
 class SolutionChecks(unittest.TestCase):
+    def test_visual_subtree_is_excluded_from_quantization(self):
+        from lab import UNQUANTIZED_MODULES
+        from transformers.quantizers.quantizers_utils import should_convert_module
+        for name in ("model.visual.blocks.0.attn.qkv", "model.visual.merger.linear_fc1",
+                     "model.visual.deepstack_merger_list.0.linear_fc1", "lm_head"):
+            self.assertFalse(should_convert_module(name, UNQUANTIZED_MODULES), name)
+        self.assertTrue(should_convert_module("model.language_model.layers.0.self_attn.q_proj",
+                                            UNQUANTIZED_MODULES))
+
     def test_coordinates_and_order(self):
         from lab import objects_to_answer
         objects = [{"label": "crack", "yolo": [.5, .5, .2, .2]},

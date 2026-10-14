@@ -6,6 +6,8 @@ Filesystem Colab khác máy Windows. Đưa toàn bộ mã đã hoàn thiện lê
 
 Các bước notebook: cài dependencies → kiểm tra GPU → mount Drive → lấy dataset bằng Secrets/zip → audit → kiểm tra mask → E0 → E1/E2/E3 → E4 → ảnh và tổng hợp.
 
+Đã xác minh trên Colab: TorchAO có sẵn bản 0.10.0 gây lỗi khi PEFT 0.21.2 gắn LoRA vào các Linear thường của ViT ở E3. Notebook kiểm tra và gỡ TorchAO nếu bản thấp hơn 0.16.0 trong runtime Colab riêng; bài chỉ dùng bitsandbytes. Cấu hình lượng tử hóa cũng phải bỏ qua đường dẫn đầy đủ `model.visual`, vì `visual` không khớp nhánh này ở Transformers 5.19.0.
+
 Adapter và projector lưu vào `CHECKPOINT_ROOT` trên Drive sau mỗi 100 bước. Muốn suy luận lại checkpoint hoàn chỉnh, chạy action `infer` thay vì `run` (action `run` huấn luyện lại). Checkpoint giữa chừng được lưu để bảo toàn tiến độ, nhưng hiện chưa hỗ trợ khôi phục trạng thái optimizer để tiếp tục đúng bước.
 
 Lệnh chạy từ Python kernel, không chạy từ terminal local:

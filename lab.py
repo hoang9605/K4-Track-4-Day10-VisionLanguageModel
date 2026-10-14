@@ -14,6 +14,7 @@ from scripts.labcommon import CLASSES, read_jsonl
 from scripts.score import iou_xyxy, parse_output
 
 MODEL_ID = "Qwen/Qwen3-VL-4B-Instruct"
+UNQUANTIZED_MODULES = ["model.visual", "lm_head"]
 LLM_TARGET = r"model\.language_model\.layers\.\d+\.(?:self_attn\.(?:q|k|v|o)_proj|mlp\.(?:gate|up|down)_proj)"
 VIT_TARGET = r"model\.visual\.blocks\.\d+\.(?:attn\.(?:qkv|proj)|mlp\.(?:linear_fc1|linear_fc2))"
 
@@ -104,10 +105,15 @@ def load_base(config):
         raise RuntimeError("Connect a Colab T4 GPU kernel before running experiments")
     quant = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
                               bnb_4bit_compute_dtype=torch.float16, bnb_4bit_use_double_quant=True,
-                              llm_int8_skip_modules=["visual", "lm_head"])
+                              llm_int8_skip_modules=UNQUANTIZED_MODULES)
     model = Qwen3VLForConditionalGeneration.from_pretrained(
         config.get("model_id", MODEL_ID), quantization_config=quant,
         dtype=torch.float16, device_map={"": 0})
+    from bitsandbytes.nn import Linear4bit
+    quantized_visual = [name for name, module in model.model.visual.named_modules()
+                        if isinstance(module, Linear4bit)]
+    if quantized_visual:
+        raise RuntimeError(f"Visual must remain dense fp16; quantized modules: {quantized_visual[:5]}")
     processor = AutoProcessor.from_pretrained(config.get("model_id", MODEL_ID))
     processor.tokenizer.padding_side = "left"
     return model, processor

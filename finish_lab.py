@@ -65,7 +65,7 @@ def figures(name, data_dir):
             draw.text(tuple(box[:2]), "PRED "+b["label"], fill="red")
         filename = f"{name}_{i}.png"
         image.save(out/filename)
-        captions.append(f"![{e['image_id']}: F1={f1:.3f}; GT xanh, dự đoán đỏ](figures/{filename})")
+        captions.append(f"![{e['image_id']}: F1={f1:.3f}; GT xanh, dự đoán đỏ]({filename})")
     (out/f"{name}_captions.md").write_text("\n\n".join(captions), encoding="utf-8")
 
 
