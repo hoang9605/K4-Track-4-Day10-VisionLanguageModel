@@ -1,0 +1,17 @@
+{
+  "pothole": {
+    "train_boxes": 1074,
+    "test_boxes": 121,
+    "test_median_area_percent": 0.41927008680000005
+  },
+  "crack": {
+    "train_boxes": 1750,
+    "test_boxes": 299,
+    "test_median_area_percent": 1.9813205034999999
+  },
+  "manhole": {
+    "train_boxes": 691,
+    "test_boxes": 163,
+    "test_median_area_percent": 0.6688347743
+  }
+}
