@@ -1,7 +1,7 @@
 Họ tên: NguyenHaiHoang
 `dataset_version`: d10-21e4070301
 
-Trạng thái bài push: E0 và E1 đã chấm test đầy đủ trên Colab Tesla T4. Log E2 cuối cùng đã kiểm tra đến bước 110/300; sau khi VS Code đóng, chưa khôi phục được runtime T4. Chưa có evidence E2–E4, nên bài chưa đạt điều kiện nộp đầy đủ. Các ô thiếu kết quả để trống, không thay bằng số giả.
+Trạng thái bài push: E0 và E1 đã chấm test đầy đủ trên Colab Tesla T4. Log E2 cuối cùng đã kiểm tra đến bước 110/300; sau khi VS Code đóng, chưa khôi phục được runtime T4. Đã xóa runtime CPU trống theo xác nhận để cấp lại T4, nhưng Colab trả insufficient quota ngày 14/10/2026. Chưa có evidence E2–E4, nên bài chưa đạt điều kiện nộp đầy đủ; cần runtime GPU còn quota để chạy tiếp. Các ô thiếu kết quả để trống, không thay bằng số giả.
 
 ## Bảng tổng hợp (số của bạn, lấy từ `report/evidence/*.json`)
 

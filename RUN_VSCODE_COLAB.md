@@ -23,3 +23,5 @@ Sau khi có kết quả thật: điền REPORT.md, lấy bảng trong report/RES
 Đã chạy E0 và huấn luyện đủ 300 bước E1 trên Tesla T4; E2–E4 chưa có bằng chứng hoàn chỉnh sau khi mất kết nối runtime T4. Xem `REPORT.md` và `report/evidence/` để phân biệt kết quả đã đo với phần còn chờ. Các lần smoke test một bước chỉ để kiểm tra môi trường, không phải bằng chứng nộp bài.
 
 Bộ test gốc có một kiểm tra yêu cầu REPORT.md còn chuỗi `<điền`, mâu thuẫn với check_submission.py yêu cầu xóa chuỗi đó. Sau khi điền báo cáo, chỉ bỏ riêng kiểm tra mẫu bằng `python -m pytest -q -k "not test_report_template_has_student_markers_and_ten_questions"`; không sửa scripts/ hoặc tests/.
+
+Ngày 14/10/2026, sau khi xóa runtime CPU trống, Colab từ chối cấp T4 với lỗi insufficient quota. Khi có GPU trở lại, giải nén mã, chuẩn bị lại dataset, khôi phục work/validation/e1.json cùng work/e0.jsonl và work/e1.jsonl từ bản local đã lưu, rồi chạy run_experiments.py --start e2_train. Không chạy lại E0/E1 để thay kết quả đã chấm.
